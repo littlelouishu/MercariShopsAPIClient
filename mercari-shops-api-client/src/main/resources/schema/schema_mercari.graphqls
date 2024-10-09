@@ -1,0 +1,1238 @@
+# Define a relation between the field and other nodes
+directive @complexity(
+  multipliers: [String!]
+
+  # The complexity value for the field
+  value: Int!
+) on FIELD_DEFINITION
+
+input AddProductVariantsInput {
+  # The product id to add variants
+  productId: String!
+
+  # The List of variants to add
+  variants: [ProductVariantInput!]!
+}
+
+type AddProductVariantsPayload {
+  # Updated Product
+  product: Product!
+}
+
+input AddTransactionMessageInput {
+  # The message to add. The maximum length of the field is 1000 characters.
+  message: String!
+
+  # The order id to add a message
+  orderId: ID!
+}
+
+type AddTransactionMessagePayload {
+  # The added transaction message
+  order: Order!
+}
+
+# Asset has information such as images stored in mercari shops
+type Asset {
+  # The content-size of the asset
+  contentSize: Int!
+
+  # The content-type of the asset
+  contentType: String!
+
+  # A globally-unique identifier
+  id: ID!
+
+  # The URL to access content body
+  imageURL(options: AssetImageOptions): String!
+}
+
+input AssetImageOptions {
+  # The image format. jpg/png/webp
+  format: ImageForamt
+
+  # The size preset of the image
+  # Replace [ImagePreset!] with [ImagePreset] due to the error when generating java code by tool graphqlcodegen.
+  presets: [ImagePreset] = [Default]
+}
+
+# The possible business kind for a shop
+enum BusinessKind {
+  # Corporate. (法人)
+  CORPORATE
+
+  # Person. (個人)
+  PERSON
+
+  # Solo proprietorship. (個人事業主)
+  SOLO_PROPRIETORSHIP
+
+  # This value is never used.
+  UNSPECIFIED
+}
+
+input CancelOrderInput {
+  # The reason for canceling the order
+  cancelReasonType: CancelReasonType!
+
+  # The order id to update status
+  id: ID!
+}
+
+type CancelOrderPayload {
+  # The order cancelled
+  order: Order!
+}
+
+# The reason why the order was canceled
+type CancelReason {
+  # value of corresponds to enum
+  name: String!
+
+  # enum of cancel reason
+  type: String!
+}
+
+# the cancel reason of the order
+enum CancelReasonType {
+  # The product is defected of the order. (商品に不備が見つかった)
+  DEFECTIVE_PRODUCT
+
+  # Could not confirm the payment of the order. (支払いが確認できない)
+  NO_PAYMENT
+
+  # No left product stock of the order. (商品の在庫がない)
+  NO_PRODUCT_STOCK
+
+  # other reasons caused by shop. (その他（ショップ都合）)
+  OTHERS_BY_SELLER
+
+  # Buyer requested to cancel the order. (購入者からのキャンセル依頼)
+  REQUEST_FROM_BUYER
+
+  # Troubled by Delivery company. (配送業者によるトラブル（未着や破損）)
+  TROUBLE_BY_DELIVERY_COMPANY
+
+  # This value is never used.
+  UNSPECIFIED
+
+  # The delivery address is incorrect. (配送先住所が間違っていた)
+  WRONG_DELIVERY_ADDRESS
+}
+
+input CompleteOrderInput {
+  # The order id to update status
+  id: ID!
+}
+
+type CompleteOrderPayload {
+  # The order completed
+  order: Order!
+}
+
+input CreateProductInput {
+  # The brand id of the product. Use productBrands query to find a brandId. It shows a list of Product Brand information that includes brandId.
+  brandId: String
+
+  # The category id of the product. Use productCategories query to find a categoryId. It shows a list of Product Category information that includes categoryId. Only categories with no descendants can be specified
+  categoryId: String!
+
+  # The condition of the product
+  condition: ProductCondition!
+
+  # The description of the product. The maximum length of the field is 3000 characters.
+  description: String!
+
+  # The list of asset URLs. You can use only 'https' schema for the URLs. The maximum size of the list is 10.
+  imageUrls: [String!]!
+
+  # The name of the product. The maximum length of the field is 130 characters.
+  name: String!
+
+  # The price of the product. It must be between 300 and 9999999.
+  price: Int!
+
+  # The shipping duration
+  shippingDuration: ShippingDuration!
+
+  # The area to be shipped from. Use states query to find a stateId. It shows a list of State information that includes StateId.
+  shippingFromStateId: String!
+
+  # The shipping method
+  shippingMethod: ShippingMethod!
+
+  # Who pays for shipping, the sender or the recipient
+  shippingPayer: ShippingPayer!
+
+  # The status of the product visibility
+  status: ProductStatus!
+
+  # The Variants of the Product
+  variants: [ProductVariantInput!]!
+}
+
+type CreateProductPayload {
+  # The product created
+  product: Product!
+}
+
+input CreateWebhookInput {
+  # The endPoint to handle the webhook topic
+  endPoint: String!
+
+  # The topic you want to receive the event in the endpoint
+  topic: WebhookTopic!
+}
+
+type CreateWebhookPayload {
+  # The webhook created
+  webhook: Webhook!
+}
+
+# The possible payment methods
+enum CreditCardPayMethodType {
+  # Installments (分割払い)
+  INSTALLMENTS
+
+  # One Time (一括払い)
+  ONETIME
+
+  # This value is not used.
+  UNRECOGNIZED
+
+  # This value is not used.
+  UNSPECIFIED
+}
+
+# A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+scalar DateTime
+
+input DebugCreateOrderInput {
+  balancePaymentMethod: PaymentMethodBalanceInput
+
+  # Payment method of credit card. Debug API does not require this parameter to be entered.
+  creditCardPaymentMethod: PaymentMethodCreditCardInput
+
+  # Ordered product id of the order.
+  productId: String!
+
+  # Ordered variant id of the order.
+  variantId: String!
+}
+
+type DebugCreateOrderPayload {
+  # The order created
+  order: Order!
+}
+
+input DecreaseProductVariantStockInput {
+  # The number of quantity the stock decrease
+  stockQuantity: Int!
+}
+
+type DecreaseProductVariantStockPayload {
+  # Updated Variant
+  productVariant: ProductVariant!
+}
+
+input DeleteProductInput {
+  # The id of product to delete
+  id: ID!
+}
+
+type DeleteProductPayload {
+  # A globally-unique identifier.
+  id: ID!
+}
+
+input DeleteProductVariantInput {
+  # The id of product variant to delete
+  id: ID!
+}
+
+type DeleteProductVariantPayload {
+  # The id of the variant deleted
+  id: ID!
+}
+
+input DeleteWebhookInput {
+  # The webhook id to delete
+  id: ID!
+}
+
+type DeleteWebhookPayload {
+  # The id of the webhook deleted
+  id: ID!
+}
+
+# The error code for global
+enum ErrorCode {
+  # janCode is already exists
+  PRODUCT_JAN_CODE_DUPLICATED
+
+  # skuCode is already exists
+  PRODUCT_SKU_CODE_DUPLICATED
+
+  # The quantity of the stock must be greater than or equal to 0 or less than 9999
+  PRODUCT_VARIANT_STOCK_OUT_OF_RANGE
+}
+
+# The format type of the image asset
+enum ImageForamt {
+  # gif
+  GIF
+
+  # jpeg
+  JPEG
+
+  # Origin
+  ORIGIN
+
+  # png
+  PNG
+
+  # webp
+  WEBP
+}
+
+# The preset for specifying the size and shape of the image
+enum ImagePreset {
+  # Default size and shape.
+  Default
+
+  # Large
+  Large
+
+  # Medium
+  Medium
+
+  # Mini
+  Mini
+
+  # Small
+  Small
+
+  # Square
+  Square
+
+  # XLarge
+  XLarge
+
+  # XMini
+  XMini
+
+  # XSmall
+  XSmall
+
+  # XXSmall
+  XXSmall
+}
+
+input IncreaseProductVariantStockInput {
+  # The number of quantity the stock increase
+  stockQuantity: Int!
+}
+
+type IncreaseProductVariantStockPayload {
+  # Updated Variant
+  productVariant: ProductVariant!
+}
+
+input MallProductCategory {
+  # The mall type id.
+  mallType: MallType!
+
+  # The product category id of mall
+  productCategoryId: String!
+}
+
+# The mall types
+enum MallType {
+  # The product category id of rakuten ichiba
+  RAKUTEN_ICHIBA
+
+  # This value is never used.
+  UNSPECIFIED
+
+  # The product category id of yahoo auction
+  YAHOO_AUCTION
+
+  # The product category id of yahoo shopping
+  YAHOO_SHOPPING
+}
+
+type Mutation {
+  # Adds a Variant to a Product.
+  addProductVariants(
+    input: AddProductVariantsInput!
+  ): AddProductVariantsPayload!
+
+  # Adds a Transaction Message to an Order
+  addTransactionMessage(
+    input: AddTransactionMessageInput!
+  ): AddTransactionMessagePayload!
+
+  # Cancels an Order. You can not cancel an Order if the Order has already been completed. And you can not cancel an Order after 365 days have passed since the Order was created. The order cancellation will be processed asynchronously. Usually, if your request is accepted correctly, the process will be done successfully in a short time. But in very rare cases, the process may take a long time. So please use order/orders query to check the exact order status if you need it.
+  cancelOrder(input: CancelOrderInput!): CancelOrderPayload!
+
+  # Completes an Order. It notifies the buyer that the purchased product has been shipped. Sales are credited to your Shop at the same time. The order completion will be processed asynchronously. Usually, if your request is accepted correctly, the process will be done successfully in a short time. But in very rare cases, the process may take a long time. So please use order/orders query to check the exact order status if you need it.
+  completeOrder(input: CompleteOrderInput!): CompleteOrderPayload!
+
+  # Creates a Product.
+  createProduct(input: CreateProductInput!): CreateProductPayload!
+
+  # Creates a Webhook for your Shop
+  createWebhook(input: CreateWebhookInput!): CreateWebhookPayload!
+
+  # Create debug order. It is a mutation for debug and test, that can only be used in a sandbox environment. In rare cases, orders may be created even if TimeoutError occurs.
+  debugCreateOrder(input: DebugCreateOrderInput!): DebugCreateOrderPayload!
+
+  # Decreases the quantity of Stock.
+  decreaseProductVariantStock(
+    by: ProductVariantBy!
+    input: DecreaseProductVariantStockInput!
+  ): DecreaseProductVariantStockPayload!
+
+  # Deletes a Product.
+  deleteProduct(input: DeleteProductInput!): DeleteProductPayload!
+
+  # Deletes a Variant.
+  deleteProductVariant(
+    input: DeleteProductVariantInput!
+  ): DeleteProductVariantPayload!
+
+  # Deletes the Webhook by ID
+  deleteWebhook(input: DeleteWebhookInput!): DeleteWebhookPayload!
+
+  # Increases the quantity of Stock.
+  increaseProductVariantStock(
+    by: ProductVariantBy!
+    input: IncreaseProductVariantStockInput!
+  ): IncreaseProductVariantStockPayload!
+
+  # Updates a Product.
+  updateProduct(input: UpdateProductInput!): UpdateProductPayload!
+
+  # Updates a Variant.
+  updateProductVariant(
+    by: ProductVariantBy!
+    input: UpdateProductVariantInput!
+  ): UpdateProductVariantPayload!
+
+  # Updates the SKU code of the Variant
+  updateProductVariantSKU(
+    input: UpdateProductVariantSKUInput!
+  ): UpdateProductVariantSKUPayload!
+
+  # Updates multiple Variants.
+  updateProductVariants(
+    inputs: [UpdateProductVariantsInput!]!
+  ): UpdateProductVariantsPayload!
+
+  # Updates multiple Products. The updateProducts does not support imageUrls, so will ignore if specified in inputs.
+  updateProducts(
+    # The maximum size of the list is 20.
+    inputs: [UpdateProductInput!]!
+  ): UpdateProductsPayload!
+
+  # Updates the shipping tracking code to the order. This code is optional. But please set the shipping tracking code to make buyers find their package easily.
+  updateShippingTrackingCode(
+    input: UpdateShippingTrackingCodeInput!
+  ): UpdateShippingTrackingCodePayload!
+}
+
+# Order is a customer's order information to purchase one or more items from a shop
+type Order {
+  # Date and time when the Order was cancelled
+  canceledAt: DateTime
+
+  # Whether the order can be cancelled
+  cancellable: Boolean!
+
+  # Date and time when the Order was completed
+  completedAt: DateTime
+
+  # Date and time when the Order was created
+  createdAt: DateTime!
+  customerInfo: UserInfo!
+
+  # A globally-unique identifier
+  id: ID!
+
+  # A list of the Order's Transaction Messages.
+  messages: [TransactionMessage!]!
+
+  # The coupon consumed with order
+  orderCoupon: OrderCoupon
+
+  # Date and time the buyer of that order paid
+  paidAt: DateTime
+
+  # The deadline of the payment
+  paymentDeadline: DateTime
+
+  # A list of the Order's Payment Methods that a buyer chose.
+  paymentMethod: [PaymentMethod!]!
+
+  # A list of the Order's products
+  products: [OrderProduct!]!
+
+  # Amount of the fee
+  salesFee: Int!
+
+  # Shipping information of the Order.
+  shipping: Shipping
+
+  # The status of the order
+  status: OrderStatus!
+
+  # Total amount of the order (includes sales fee, shipping charges, and discounts
+  totalPrice: Int!
+
+  # Date and time when the Order was updated
+  updatedAt: DateTime
+}
+
+type OrderConnection {
+  # A list of edges
+  edges: [OrderEdge!]
+
+  # Page information for Paging.
+  pageInfo: PageInfo!
+}
+
+type OrderCoupon {
+  # consumed coupon id to display
+  couponDisplayId: String!
+
+  # consumed coupon id
+  couponId: String!
+
+  # discount amount by coupon
+  discountAmount: Int!
+}
+
+type OrderEdge {
+  # A node
+  node: Order!
+}
+
+# OrderProduct is a single product of an order
+type OrderProduct {
+  # The product name
+  name: String!
+
+  # The product price
+  price: Int!
+
+  # The product asset ID
+  productAssetId: String!
+
+  # product ID
+  productId: ID!
+
+  # order ID
+  variant: OrderVariant!
+}
+
+# The transaction status of the order
+enum OrderStatus {
+  # Represents the status that the order has been canceled
+  CANCELED
+
+  # Represents the status that the order is canceling
+  CANCELING
+
+  # Represents the status that the order has been created and the shipping also has been completed
+  COMPLETED
+
+  # Represents the status that the order is under processing to be completed
+  COMPLETING
+
+  # Represents the status that the order is creating
+  CREATING
+
+  # This value is not used
+  UNSPECIFIED
+
+  # Represents the status that the order has been created and waiting for the payment
+  WAITING_FOR_PAYMENT
+
+  # Represents the status that the order has been created and waiting for the shipping
+  WAITING_FOR_SHIPPING
+}
+
+type OrderVariant {
+  # A globally-unique identifier
+  id: ID!
+
+  # The janCode of the variant
+  janCode: String
+
+  # The name of the variant
+  name: String
+
+  # The skuCode of the variant
+  skuCode: String
+}
+
+type PageInfo {
+  # Would be set if 'hasNextPage' field was true. You can use this value for 'after' argument of 'product' query or 'order' query.
+  endCursor: String
+
+  # Would be true if the list has next page.
+  hasNextPage: Boolean!
+}
+
+# The possible payment methods
+enum PaymentMethod {
+  # Balance. (残高（売上金含む）)
+  BALANCE
+
+  # Carrier Payment. (キャリア決済)
+  CARRIER_PAYMENT
+
+  # Credit Card. (クレジットカード)
+  CREDIT_CARD
+
+  # Merpay-smart-payment. (メルペイスマート払い) Cannot select in debugCreateOrder mutation.
+  DEFERRED
+
+  # Convenience store/ATM. (コンビニ/ATM払い)
+  STORE_PAYMENT
+  UNSPECIFIED
+}
+
+input PaymentMethodBalanceInput {
+  fundsAmount: Int!
+  pointAmount: Int!
+}
+
+input PaymentMethodCreditCardInput {
+  amount: Int!
+
+  # Debug API does not require this parameter to be entered.
+  creditCardId: String
+  payMethod: CreditCardPayMethodType!
+
+  # Pay times of credit card payment
+  payTimes: Int!
+}
+
+# The Product resource represents a product in your shop
+type Product {
+  # Returns a list of Product's Assets
+  assets: [Asset!]!
+
+  # The Brand of the Product
+  brand: ProductBrand
+
+  # The Categories of the Product
+  categories: [ProductCategory!]!
+
+  # The condition of the product
+  condition: ProductCondition!
+
+  # The Date and time when the product created
+  createdAt: DateTime!
+
+  # The description of the product
+  description: String!
+
+  # A globally-unique identifier
+  id: ID!
+
+  # The name of the product
+  name: String!
+
+  # The price of the product. If the discount price was set to the Product, this value would be the discount price.
+  price: Int!
+
+  # The shipping duration
+  shippingDuration: ShippingDuration!
+
+  # State where the Product is shipped from.
+  shippingFromState: State!
+
+  # The shipping method
+  shippingMethod: ShippingMethod!
+
+  # Who pays for shipping, the sender or the recipient
+  shippingPayer: ShippingPayer!
+
+  # The product status. This controls visibility across all channel
+  status: ProductStatus!
+
+  # The Date and time when the product updated
+  updatedAt: DateTime!
+
+  # Returns a list of Variants that the Product has
+  variants: [ProductVariant!]!
+}
+
+type ProductBrand {
+  # A globally-unique identifier
+  id: ID!
+
+  # The name of the brand
+  name: String!
+
+  # The English name of the brand
+  nameEn: String!
+}
+
+type ProductCategory {
+  # This represents whether it has a child category. A category with hasChild true cannot be set to a product
+  hasChild: Boolean!
+
+  # A globally-unique identifier
+  id: ID!
+
+  # The name of the category
+  name: String!
+
+  # The parent id of the category. This is used to build the tree structure
+  parentId: String
+}
+
+# The possible product conditions
+enum ProductCondition {
+  # Almost new. (未使用に近い)
+  ALMOST_NEW
+
+  # Bad. (全体的に状態が悪い)
+  BAD
+
+  # Brand new. (新品、未使用)
+  BRAND_NEW
+
+  # Clean. (目立った傷や汚れなし)
+  CLEAN
+
+  # Dirty. (傷や汚れあり)
+  DIRTY
+
+  # Little dirty. (やや傷や汚れあり)
+  LITTLE_DIRTY
+
+  # This value is never used.
+  UNSPECIFIED
+}
+
+type ProductConditionOption {
+  # The name for the option
+  name: String!
+
+  # The enum of the option
+  type: ProductCondition!
+}
+
+type ProductConnection {
+  # A list of edges
+  edges: [ProductEdge!]
+
+  # Page information for Paging.
+  pageInfo: PageInfo!
+}
+
+type ProductEdge {
+  # A node
+  node: Product!
+}
+
+# The product status to control visibility
+enum ProductStatus {
+  # The Product will be public for all customers. (公開)
+  OPENED
+
+  # The Product will be private. The only Product owner can see it. (非公開)
+  UNOPENED
+
+  # This value is never used.
+  UNSPECIFIED
+}
+
+type ProductStatusOption {
+  # The name for the option
+  name: String!
+
+  # The enum of the option
+  type: ProductStatus!
+}
+
+# ProductVariant is a variation of a Product. One Product can have multiple ProductVariants. For example, A T-Shirt Product might have various colors like Red, Blue, and White. In this case, each type of color would be one ProductVariant.
+type ProductVariant {
+  # A globally-unique identifier
+  id: ID!
+
+  # The janCode of the variant
+  janCode: String
+
+  # The name of the Variant.
+  name: String
+
+  # The product of the Variant.
+  product: Product!
+
+  # The skuCode of the variant
+  skuCode: String
+
+  # The quantity of the Stock.
+  stockQuantity: Int!
+}
+
+# ProductVariant can be retrieved by id or skuCode. A query or mutation with ProductVariantBy specified can identify ProductVariant by id or skuCode.
+input ProductVariantBy {
+  # A global unique identifier
+  id: ID
+
+  # The skuCode of the variant
+  skuCode: ID
+}
+
+input ProductVariantInput {
+  # The jan-code of the variant. jan-code must be unique value in your Shop. The maximum length of the field is 14 characters. Only numbers, alphabetic, hyphens [-], and underscores [_] are allowed.
+  janCode: String
+
+  # The name of the variant. The maximum length of the field is 16 characters.
+  name: String
+
+  # The sku-code of the variant. sku-code must be a unique value in your Shop. The maximum length of the field is 50 characters. Only numbers, alphabetic, hyphens [-], and underscores [_] are allowed.
+  skuCode: String
+
+  # The number of stocks of the variant. The quantity of the stock will be overwritten by this value.
+  stockQuantity: Int
+}
+
+type Query {
+  # Returns a list of Product Condition Option values. You can use these values for Product creation or updates.
+  availableProductConditionOptions: [ProductConditionOption!]!
+
+  # Returns a list of Product Status Option values. You can use these values for Product creation or updates.
+  availableProductStatusOptions: [ProductStatusOption!]!
+
+  # Returns a list of Shipping Duration Option values. You can use these values for Product creation or updates.
+  availableShippingDurationOptions: [ShippingDurationOption!]!
+
+  # Returns a list of Shipping Method Option values. You can use these values for Product creation or updates. The content of the list depends on the kind of business (BusinessKind) of a shop. Usually, 'Person' BusinessKind has fewer options than 'Sole Proprietorship' or 'Corporation'.
+  availableShippingMethodOptions: [ShippingMethodOption!]!
+
+  # Returns a list of Shipping Payer Option values. It represents which person will pay the shipping fee. You can use these values for Product creation or updates. Currently, you can only use SELLER value for the option.
+  availableShippingPayerOptions: [ShippingPayerOption!]!
+  cancelReasonTypes: [CancelReason!]!
+
+  # Returns a list of error codes. You might receive these error codes when your query/mutation failed.
+  errorCodes: [ErrorCode!]!
+
+  # Returns a list of product category
+  mappedProductCategories(
+    # The List of mall product category
+    mallProductCategories: [MallProductCategory!]
+  ): [[ProductCategory!]!]!
+
+  # Returns an Order by ID.
+  order(
+    # A globally-unique identifier
+    id: ID!
+  ): Order!
+
+  # Returns a list of orders.
+  orders(
+    # This value is supposed to be endCursor value of PageInfo Type. You can retrieve a list that is contained after the cursor.
+    after: String
+
+    # If specified, the only orders that has been canceled will be displayed
+    canceled: Boolean
+
+    # If specified, the only orders that has been completed will be displayed
+    completed: Boolean
+
+    # Number of the nodes that you want to get from a list
+    first: Int = 100
+
+    # If specified, the only orders that has the keyword in product name or variant name or sku code
+    keyword: String
+
+    # If specified, the only orders that has the DateTime grater than equal this value will be displayed
+    orderedDateGte: DateTime
+
+    # If specified, the only orders that has the DateTime less than this value will be displayed
+    orderedDateLt: DateTime
+
+    # If specified, the only orders that updated DateTime grater than equal this value will be displayed
+    updatedDateGte: DateTime
+
+    # If specified, the only orders that updated DateTime less than this value will be displayed
+    updatedDateLt: DateTime
+  ): OrderConnection!
+
+  # Returns a Product by ID
+  product(
+    # A globally-unique identifier
+    id: String!
+  ): Product!
+
+  # Returns a list of Product Brands. You can use these values for Product creation or updates.
+  productBrands: [ProductBrand!]!
+
+  # Returns a list of Product Categories. You can use these values for Product creation or updates.
+  productCategories: [ProductCategory!]!
+
+  # Returns a Variant by ID or SKU code.
+  productVariant(by: ProductVariantBy!): ProductVariant!
+
+  # Returns a list of your Shop's Products
+  products(
+    # This value is supposed to be endCursor value of PageInfo Type. You can retrieve a list that is contained after the cursor.
+    after: String
+
+    # Number of the nodes that you want to get from a list
+    first: Int = 100
+
+    # A filtering keyword to retrieve product list that is contained specified product(variant) name or sku code by partial match.
+    keyword: String
+  ): ProductConnection!
+
+  # Returns a Shop that you own.
+  shop: Shop!
+
+  # Returns a list of State information that includes id and State name.
+  states: [State!]!
+
+  # Returns a Webhook by ID
+  webhook(
+    # A globally-unique identifier
+    id: ID!
+  ): Webhook!
+
+  # Returns a list of Webhooks that is specified for your Shop
+  webhooks: [Webhook!]!
+}
+
+# Shipping is shipping information
+type Shipping {
+  # A globally-unique identifier
+  id: ID!
+
+  # Shipping method of the shipped package. This value is one of "UNDECIDED"(出品者が手配), "COOL"(クール便), "MERCARI_SHIPPING_YAMATO"(らくらくメルカリ便), "MERCARI_SHIPPING_YAMATO_COOL_REFRIGERATED"(クールメリカリ便(冷蔵)), or "MERCARI_SHIPPING_YAMATO_COOL_FROZEN"(クールメルカリ便(冷凍))
+  method: String!
+
+  # An address shipped from.
+  senderAddress: ShippingAddress
+
+  # Destination shipping address.
+  shippingAddress: ShippingAddress
+
+  # The code assigned to packages when they are shipped
+  trackingCode: String!
+}
+
+# The address the user has. Users can have multiple addresses
+type ShippingAddress {
+  # The first line of the address. Typically the street address
+  address1: String
+
+  # The second line of the address. Typically the number of the apartment, suite, or unit
+  address2: String
+
+  # The name of the city, district, village, or town
+  city: String
+
+  # The name of the country
+  country: String!
+
+  # The first name of the customer
+  firstName: String
+
+  # The first kana-name of the customer
+  firstNameKana: String
+
+  # The last name of the customer
+  lastName: String
+
+  # The last kana-name of the customer
+  lastNameKana: String
+
+  # A unique phone number for the customer
+  phoneNumber: String
+
+  # The postal code of the address
+  postalCode: String!
+
+  # State where the Product is shipped from.
+  state: State!
+}
+
+# The possible types of shipping times
+enum ShippingDuration {
+  # Eight to ninety days. (８〜９０日で発送)
+  EIGHT_DAYS_OR_MORE_OR_UNDECIDED
+
+  # Four to seven days. (４〜７日で発送)
+  FOUR_TO_SEVEN_DAYS
+
+  # One to two days. (１〜２日で発送)
+  ONE_TO_TWO_DAYS
+
+  # Two to three days. (２〜３日で発送)
+  TWO_TO_THREE_DAYS
+
+  # This value is never used.
+  UNSPECIFIED
+}
+
+type ShippingDurationOption {
+  # The name for the option
+  name: String!
+
+  # The enum of the option
+  type: ShippingDuration!
+}
+
+# The possible shipping methods
+enum ShippingMethod {
+  # Delivers their product with a shipping method that keeps refrigerated for its products. (クール便)
+  COOL
+
+  # Delivers its products with Mercari-Shipping. (らくらくメルカリ便)
+  MERCARI_SHIPPING_YAMATO
+
+  # Delivers its products that must be frozen with Cool-Mercari-Shipping. (クールメルカリ便（冷凍）)
+  MERCARI_SHIPPING_YAMATO_COOL_FROZEN
+
+  # Delivers its products with Cool-Mercari-Shipping. (クールメルカリ便（冷蔵）)
+  MERCARI_SHIPPING_YAMATO_COOL_REFRIGERATED
+
+  # The shipping is undecided. A Shop can choose any kind of Shipping method for their delivery. 未定(出品者が手配)
+  UNDECIDED
+
+  # This value is never used.
+  UNSPECIFIED
+}
+
+type ShippingMethodOption {
+  # The name for the option
+  name: String!
+
+  # The enum of the option
+  type: ShippingMethod!
+}
+
+# The possible shipping payers
+enum ShippingPayer {
+  # The seller pays shipping fee. 送料込み(出品者負担)
+  SELLER
+
+  # This value is never used.
+  UNSPECIFIED
+}
+
+type ShippingPayerOption {
+  # The name for the option
+  name: String!
+
+  # The enum of the option
+  type: ShippingPayer!
+}
+
+# Shop represents a collection of the general settings and information about the shop
+type Shop {
+  # Returns the business kind of the shop
+  businessKind: BusinessKind!
+
+  # The date and time when the shop was created
+  createdAt: DateTime!
+
+  # The shop's description used in shop page
+  description: String!
+
+  # A globally-unique identifier
+  id: ID!
+
+  # The shop's name
+  name: String!
+}
+
+# State is the area from which the shipment will be sent
+type State {
+  # A globally-unique identifier
+  id: ID!
+
+  # The name of the state
+  name: String!
+}
+
+# TransactionMessage is a record of message exchanges regarding the transaction
+type TransactionMessage {
+  # The Date and time when the transaction-message created
+  createdAt: DateTime!
+
+  # A globally-unique identifier
+  id: ID!
+
+  # A message posted by users
+  message: String!
+
+  # The role of author
+  role: TransactionMessageAuthorRole!
+}
+
+# The author's role for message
+enum TransactionMessageAuthorRole {
+  # A buyer sent this message
+  BUYER
+
+  # A seller sent this message
+  SELLER
+
+  # This value is never used.
+  UNSPECIFIED
+}
+
+input UpdateProductInput {
+  # The brand id of the product. Use productBrands query to find a brandId. It shows a list of Product Brand information that includes brandId.
+  brandId: String
+
+  # The category id of the product. Use productCategories query to find a categoryId. It shows a list of Product Category information that includes categoryId. Only categories with no descendants can be specified
+  categoryId: String
+
+  # The condition of the product
+  condition: ProductCondition
+
+  # The description of the product. The maximum length of the field is 3000 characters.
+  description: String
+
+  # The id of product to update
+  id: ID!
+
+  # The list of asset URLs. You can use only 'https' schema for the URLs. The maximum size of the list is 10.
+  imageUrls: [String!]
+
+  # The name of the product. The maximum length of the field is 130 characters.
+  name: String
+
+  # The price of the product. It must be between 300 and 9999999.
+  price: Int
+
+  # The shipping duration
+  shippingDuration: ShippingDuration
+
+  # The area to be shipped from. Use states query to find a stateId. It shows a list of State information that includes StateId.
+  shippingFromStateId: String
+
+  # The shipping method
+  shippingMethod: ShippingMethod
+
+  # Who pays for shipping, the sender or the recipient
+  shippingPayer: ShippingPayer
+
+  # The status of the product visibility
+  status: ProductStatus
+}
+
+type UpdateProductPayload {
+  # Updated Product
+  product: Product!
+}
+
+input UpdateProductVariantInput {
+  # The jan-code of the variant. jan-code must be unique value in your Shop. The maximum length of the field is 14 characters. Only numbers, alphabetic, hyphens [-], and underscores [_] are allowed.
+  janCode: String
+
+  # The name of the variant. The maximum length of the field is 16 characters.
+  name: String
+
+  # The number of stocks of the variant
+  stockQuantity: Int
+}
+
+type UpdateProductVariantPayload {
+  # Updated Variant
+  productVariant: ProductVariant!
+}
+
+input UpdateProductVariantSKUInput {
+  # The id of the variant to update
+  id: ID!
+
+  # The sku-code of the variant. sku-code must be a unique value in your Shop. The maximum length of the field is 50 characters. Only numbers, alphabetic, hyphens [-], and underscores [_] are allowed.
+  skuCode: String!
+}
+
+type UpdateProductVariantSKUPayload {
+  # The product variant updated
+  productVariant: ProductVariant!
+}
+
+input UpdateProductVariantsInput {
+  # The identifier of the variant. Either id or skuCode is specified.
+  by: ProductVariantBy!
+
+  # The update parameters of the variant.
+  input: UpdateProductVariantInput!
+}
+
+type UpdateProductVariantsPayload {
+  # The product variants updated
+  productVariants: [ProductVariant!]!
+}
+
+type UpdateProductsPayload {
+  # The products updated
+  products: [Product!]!
+}
+
+input UpdateShippingTrackingCodeInput {
+  # The order id to add shipping tracking code
+  orderId: String!
+
+  # The tracking code of the shipping
+  trackingCode: String!
+}
+
+type UpdateShippingTrackingCodePayload {
+  # Updated Order
+  order: Order!
+}
+
+# UserInfo represents an user information
+type UserInfo {
+  # the nickname of the user
+  nickname: String!
+
+  # the picture url of the user
+  pictureUrl: String
+}
+
+# Webhook represents a per-topic webhook setting
+type Webhook {
+  # The api version of the webhook topic
+  apiVersion: String!
+
+  # The date and time when the webhook was created
+  createdAt: DateTime!
+
+  # The endPoint to handle the webhook topic
+  endPoint: String!
+
+  # A globally-unique identifier
+  id: ID!
+
+  # The topic you want to receive the event in the endpoint
+  topic: WebhookTopic!
+}
+
+# The topic you want to receive the event in this endpoint
+enum WebhookTopic {
+  # order_canceled topic for webhook.
+  ORDER_CANCELED
+
+  # order_created topic for webhook.
+  ORDER_CREATED
+
+  # order_paid topic for webhook.
+  ORDER_PAID
+
+  # This value is never used.
+  UNSPECIFIED
+}
