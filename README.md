@@ -1,8 +1,8 @@
-# MercariShopsAPIClient
+# mercari-shops-api-client
 
-##Simple sample code for using mercari shops API.
+##Simple sample code for using mercari shops API.  
 
-Generate code from schema by tool below on Intellij
+Generate code from schema by tool below on IntelliJ.  
 
-https://plugins.jetbrains.com/plugin/17852-dgs
+https://plugins.jetbrains.com/plugin/17852-dgs  
 
